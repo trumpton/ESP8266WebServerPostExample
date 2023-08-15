@@ -1,0 +1,72 @@
+
+<html>
+  <head>
+    <title>MyServer Upload</title>
+
+    <script><!--
+
+      // Method 1b - multipart form upload
+      // this method supports multiple large binary files
+      function domultipartupload(dat,filename) {
+
+        const formData = new FormData() ;
+
+        // Multiple blob entries can be created
+        const blob = new Blob([dat], {
+          type: "text/plain"}) ;
+        formData.append("inputlabel", blob, filename) ;
+
+        const request = new XMLHttpRequest() ;
+        request.open("POST", "/upload") ;
+        request.send(formData) ;
+
+      }
+
+      // Method 2 - simple fetch upload
+      // this method supports single small text files
+      function dofetch(dat,filename) {
+
+        fetch("/jsfetch?file=" + filename, {
+          method: "POST",
+          headers: {'Content-type': 'text/plain'},
+          body: dat});
+
+      }
+
+    //--></script>
+
+  </head>
+  <body>
+    <h1>MyServer Upload</h1>
+
+    <p><i>Use the serial monitor to locate the arduino web server, and
+    connect to http://ipaddress/upload, and upload this file.  Then connect
+    to http://ipaddress/index.html</i></p>
+
+    <h2>Upload file - Method 1a - Multipart Form</h2>
+    <p>This example uses a form to post data to the /upload url.  Data
+    is passed in multipart form.  The file is streamed to disk, and files
+    larger than the available memory can be uploaded.</p>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <p>File: <input type="file" name="inputlabel"></p>
+      <p><input type="submit" value="Upload"></p>
+    </form>
+
+    <h2>Upload file - Method 1b - Multipart Javascript</h2>
+    <p>This example also uses the multipart form api, but it is populated
+    from Javascript.  The file is streamed to disk, and files larger than
+    the available memory can be uploaded.</p>
+    <p><button type="button" onclick="domultipartupload('multipart data content','file.txt');">Multipart Javascript Upload</button></p>
+
+
+    <h2>Upload data - Method 2 - Javascript Simple Fetch</h2>
+    <p>This is the simple Javascript fetch, which can only upload text based
+    files, and requires sufficient memory to store the file before committing
+    it to disk</p>
+    <p><button type="button" onclick="dofetch('fetch data content','file.txt');">Fetch Javascript Upload</button></p>
+
+    <h3>Uploaded Data</h3>
+    <a href="/file.txt">View uploaded file.txt here</a>
+
+  </body>
+</html>
